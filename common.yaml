@@ -1,4 +1,4 @@
-- name: configure "{{ ROLENAME }}"
+- name: configure="{{ ROLENAME }}"
   hosts: "{{ ROLENAME }}"
   become: yes
   roles:
