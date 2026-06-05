@@ -1,0 +1,74 @@
+  - name: install maven
+    package:
+      name: maven
+      state: present
+  - name: create roboshop system user
+    user:
+      name: roboshop
+      system: true
+      home: /app
+      shell: /sbin/nologin
+      comment: "Roboshop System user"
+  - name: delete the directory
+    file:
+      path: /app
+      state: absent
+  - name: delete application
+    file:
+      path: /tmp/shipping.zip
+      state: absent
+  - name: create directory
+    file:
+      path: /app
+      state: directory
+  - name: get the code 
+    get_url:
+      url: https://roboshop-artifacts.s3.amazonaws.com/shipping-v3.zip
+      dest: /tmp/shipping.zip
+  - name: unarchivethe file 
+    unarchive:
+      src:  /tmp/shipping.zip
+      dest: /app
+      remote_src: yes
+  - name: install mvn package
+    command: mvn clean package
+    args:
+      chdir: /app
+  - name: change location and rename
+    command: mv target/shipping-1.0.jar shipping.jar 
+    args:
+      chdir: /app
+  - name: get the service file
+    template:
+      src: shipping.service.j2
+      dest: /etc/systemd/system/shipping.service
+  - name: install mysql
+    package:  
+      name: mysql
+      state: present
+  - name: install python dependencies
+    pip:
+      name: PyMySQL
+      executable: pip3.9
+      
+  - name: load mysql data
+    community.mysql.mysql_db:
+      state: import
+      name: all
+      login_user: root
+      login_password: "{{ PASSWORD }}"
+      login_host: "{{ MYSQL_HOST }}"
+      target: "{{ item }}"
+    loop:
+    - /app/db/schema.sql
+    - /app/db/app-user.sql 
+    - /app/db/master-data.sql
+  - name: daemon_reload
+    systemd_service:
+      name: shipping
+      daemon_reload: yes
+  - name: stare and enable
+    service:
+      name: shipping
+      state: started
+      enabled: true

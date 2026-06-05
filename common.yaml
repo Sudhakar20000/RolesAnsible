@@ -1,0 +1,5 @@
+- name: configure "{{ ROLENAME }}"
+  hosts: "{{ ROLENAME }}"
+  become: yes
+  roles:
+   - "{{ ROLENAME }}"

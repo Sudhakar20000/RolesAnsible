@@ -1,0 +1,76 @@
+  - name: Enable the Node.js 20 DNF module stream
+    ansible.builtin.dnf:
+      name: "@nodejs:20"
+      state: present
+  - name: install nodejs
+    package:
+      name: nodejs
+      state: present
+  - name: add system user
+    user:
+      name: roboshop
+      comment: "Service account for custom application"
+      system: true
+      shell: /sbin/nologin
+      home: /app
+      state: present
+  - name: remove the directory
+    file:
+      path: /app
+      state: absent
+  - name: remove code
+    file:
+      path: /tmp/catalogue.zip
+      state: absent
+  - name: create directory
+    file:
+      path: /app
+      state: directory
+  - name: get the code
+    get_url:
+      url: "https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip"
+      dest: /tmp/catalogue.zip
+  - name: unzip the code
+    unarchive:
+      src:  /tmp/catalogue.zip
+      dest: /app 
+      remote_src: yes
+  - name: install dependencies
+    community.general.npm:
+      path: /app
+  - name: copy the service file
+    template:
+      src: catalogue.service.j2
+      dest: /etc/systemd/system/catalogue.service
+  - name: copy the mongo repo
+    copy: 
+      src: mongo.repo
+      dest: /etc/yum.repos.d/mongo.repo
+  - name: install mongo clint
+    package:
+      name: mongodb-mongosh
+      state: present
+  - name: check catalogue schema exist ot not
+    shell: mongosh --host "{{ MONGODB_HOST }}" --eval 'db.getMongo().getDBNames().indexOf("catalogue")'
+    register: catalogue_output
+    tags:
+    - mongodb
+  - name: print catalogue_output
+    debug: 
+      msg: "{{ catalogue_output }}"
+    tags:
+    - mongodb
+  - name: load products
+    shell: mongosh --host "{{ MONGODB_HOST }}" </app/db/master-data.js
+    when: catalogue_output.stdout | int < 0
+    tags:
+    - mongodb
+  - name: reload the deamom
+    systemd_service:
+      name: catalogue
+      daemon_reload: true
+  - name: start and enable
+    service:
+      name: catalogue
+      state: started
+      enabled: yes

@@ -1,0 +1,11 @@
+ansible_user: ec2-user
+ansible_password: DevOps321
+MONGODB_HOST: mongodb.sudhakar.shop
+REDIS_HOST: redis.sudhakar.shop
+USER_HOST: user.sudhakar.shop
+CATALOGUE_HOST: catalogue.sudhakar.shop
+CART_HOST: cart.sudhakar.shop
+PAYMENT_HOST: payment.sudhkar.shop
+RABBITMQ_HOST: rabbitmq.sudhakar.shop
+MYSQL_HOST: mysql.sudhakar.shop
+SHIPPING_HOST: shipping.sudhakar.shop
