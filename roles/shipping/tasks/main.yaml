@@ -10,7 +10,8 @@
  
   - name: add and remove directory
     import_role:
-    tasks_from: add_remove
+      name: common
+      tasks_from: add_remove
 
   - name: install mvn package
     command: mvn clean package
