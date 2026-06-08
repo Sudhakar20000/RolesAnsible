@@ -1,0 +1,9 @@
+  - name: daemon_reload
+    systemd_service:
+      name: "{{ ROLENAME }}"
+      daemon_reload: yes
+  - name: stare and enable
+    service:
+      name: "{{ ROLENAME }}"
+      state: started
+      enabled: true

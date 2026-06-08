@@ -1,0 +1,8 @@
+- name: add system user
+    user:
+      name: roboshop
+      comment: "Service account for custom application"
+      system: true
+      shell: /sbin/nologin
+      home: /app
+      state: present

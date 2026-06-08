@@ -1,0 +1,21 @@
+  - name: remove the directory
+    file:
+      path: /app
+      state: absent
+  - name: remove code
+    file:
+      path: /tmp/{{ ROLENAME }}.zip
+      state: absent
+  - name: create directory
+    file:
+      path: /app
+      state: directory
+  - name: get the code
+    get_url:
+      url: "https://roboshop-artifacts.s3.amazonaws.com/{{ ROLENAME }}-v3.zip"
+      dest: /tmp/{{ ROLENAME }}.zip
+  - name: unzip the code
+    unarchive:
+      src:  /tmp/{{ ROLENAME }}.zip
+      dest: /app 
+      remote_src: yes

@@ -1,0 +1,8 @@
+  - name: Enable the Node.js 20 DNF module stream
+    ansible.builtin.dnf:
+      name: "@nodejs:20"
+      state: present
+  - name: install nodejs
+    package:
+      name: nodejs
+      state: present
