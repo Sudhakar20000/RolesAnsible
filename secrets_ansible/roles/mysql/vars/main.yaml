@@ -1,1 +1,1 @@
-PASSWORD="{{ lookup('amazon.aws.secretsmanager_secret', '/dev/mysql_pass') | from_json }}"
+PASSWORD: "{{ lookup('amazon.aws.secretsmanager_secret', '/dev/mysql_pass') | from_json }}"
