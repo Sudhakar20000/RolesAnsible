@@ -1,3 +1,6 @@
+  - name: print password
+    debug:
+      msg: password is "{{ PASSWORD }}"
   - name: install mysql-server
     package:
       name: mysql-server
