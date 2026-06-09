@@ -1,0 +1,5 @@
+- name: secerets
+  host: local
+  connection: local
+  roles:
+    - mysql
