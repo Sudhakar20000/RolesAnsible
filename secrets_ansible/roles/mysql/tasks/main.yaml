@@ -1,6 +1,9 @@
   - name: print password
     debug:
       msg: password is "{{ PASSWORD }}"
+  - name: print the pass
+    debug:
+      msg: pass "{{ PASSWORD.PASSWORD }}"
   - name: install mysql-server
     package:
       name: mysql-server
@@ -11,4 +14,4 @@
       state: started
       enabled: true
   - name: setup password
-    command: mysql_secure_installation --set-root-pass "{{ PASSWORD }}"
+    command: mysql_secure_installation --set-root-pass "{{ PASSWORD.PASSWORD }}"
